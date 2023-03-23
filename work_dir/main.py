@@ -4,7 +4,7 @@ from pprint import pprint
 
 print('Приветствую тебя пользователь.\n'
       'В данной програме мы сможем вывести для тебя 1000 вакансий Python developer\n'
-      'по задваемым пораметрам с помощью нужных каманд из сайта Superjob и HeadHunter')
+      'по задваемым папраметрам с помощью нужных каманд из сайта Superjob и HeadHunter')
 print()
 input("Нажмите Enter чтобы подолжить")
 hh = HH().get_request()
