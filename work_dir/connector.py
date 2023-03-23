@@ -1,18 +1,18 @@
+from requestAPI import HH, SuperJob, HHVacancy, SJVacancy, union
+from pprint import pprint
+from datetime import datetime
+import json
+
+
 class Connector:
     """
     Класс коннектор к файлу, обязательно файл должен быть в json формате
-    не забывать проверять целостность данных, что файл с данными не подвергся
-    внешнего деградации
     """
-    __data_file = None
-    @property
-    def data_file(self):
-        pass
+    data_file = None
 
-    @data_file.setter
-    def data_file(self, value):
-        # тут должен быть код для установки файла
-        self.__connect()
+    def __init__(self, file):
+        self.file = file
+
 
     def __connect(self):
         """
@@ -21,42 +21,94 @@ class Connector:
         Также проверить на деградацию и возбудить исключение
         если файл потерял актуальность в структуре данных
         """
-        pass
+        try:
+            with open(self.file, "r") as f:
+                json.load(f)
+        except FileNotFoundError:
+            with open(self.file, "w") as f:
+                json.dump([], f)
+        except json.JSONDecodeError:
+            raise Exception("Файл поврежден")
 
-    def insert(self, data):
+    def insert(self):
         """
         Запись данных в файл с сохранением структуры и исходных данных
         """
-        pass
+        data = json.dumps(self.file)
+        data = json.loads(str(data))
+        with open('vacans.json', 'w', encoding='utf-8') as file:
+            json.dump(data, file, indent=4, ensure_ascii=False)
 
-    def select(self, query):
+
+    def select_by_salary(self, salary_min, salary_max):
         """
         Выбор данных из файла с применением фильтрации
-        query содержит словарь, в котором ключ это поле для
-        фильтрации, а значение это искомое значение, например:
-        {'price': 1000}, должно отфильтровать данные по полю price
-        и вернуть все строки, в которых цена 1000
+        по деопазону зарплаты
         """
-        pass
+        try:
+            with open("vacans.json", 'r') as f:
+                data = json.load(f)
+        except Exception:
+            print("Файл пустой, запишите данные в файл!")
+            return []
 
-    def delete(self, query):
+        filtered_data = []
+        for vacancy in data:
+            salary = vacancy['salary']
+            if salary['from'] is None:
+                salary_from = 0
+            else:
+                salary_from = salary['from']
+            if salary['to'] is None:
+                salary_to = float('inf')
+            else:
+                salary_to = salary['to']
+            if salary_from >= salary_min and salary_to <= salary_max:
+                filtered_data.append(vacancy)
+        return filtered_data
+
+    def jobs_by_date(self, num_jobs, date_str):
+        """ Метод сортируте по количесту вакансий и по дате """
+        try:
+            with open('vacans.json', 'r') as f:
+                job_data = json.load(f)
+        except Exception:
+            print("Файл пустой, запишите данные в файл!")
+            return []
+
+        dt = datetime.strptime(date_str, "%Y-%m-%d").date()
+
+        jobs = [job for job in job_data if datetime.strptime(job['date_published'], "%Y-%m-%d").date() == dt]
+        vacansy = []
+        for job in jobs[:num_jobs]:
+            vacansy.append(job)
+        return vacansy
+
+
+    def delete(self):
         """
-        Удаление записей из файла, которые соответствуют запрос,
-        как в методе select. Если в query передан пустой словарь, то
-        функция удаления не сработает
+        Удаление всех записей из файла.
         """
-        pass
+        open("vacans.json", "w").close()
 
+    def read(self):
+        """Читает содержимое файла и выводит на экран"""
+        try:
+            with open('vacans.json', 'r') as f:
+                job_data = json.load(f)
+                return job_data
+        except Exception:
+            print("Файл пустой, запишите данные в файл!")
+            return []
 
-if __name__ == '__main__':
-    df = Connector('df.json')
+# hh = HH().get_request()  # Делаем запрос
+# sj = SuperJob().get_request()  # Делаем запрос
+#
+# sjvacasy = SJVacancy(sj)  # Разбиваем по 5 критерия
+# hhvacasy = HHVacancy(hh)  # Разбиваем по 5 критерия
+# #pprint(hhvacasy.get_info_vacancy())
+# #pprint(sjvacasy.get_info_vacancy())
+#
+# con = Connector(union(sjvacasy.get_info_vacancy(), hhvacasy.get_info_vacancy()))  # класс Connector экземпляр
 
-    data_for_file = {'id': 1, 'title': 'tet'}
-
-    df.insert(data_for_file)
-    data_from_file = df.select(dict())
-    assert data_from_file == [data_for_file]
-
-    df.delete({'id':1})
-    data_from_file = df.select(dict())
-    assert data_from_file == []
+#con.insert()  # запись в файл вакансий
