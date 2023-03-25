@@ -43,7 +43,7 @@ class Connector:
     def select_by_salary(self, salary_min, salary_max):
         """
         Выбор данных из файла с применением фильтрации
-        по деопазону зарплаты
+        по диапазону  зарплаты
         """
         try:
             with open("vacans.json", 'r') as f:
@@ -68,7 +68,7 @@ class Connector:
         return filtered_data
 
     def jobs_by_date(self, num_jobs, date_str):
-        """ Метод сортируте по количесту вакансий и по дате """
+        """ Метод сортирует по количеству вакансий и по дате """
         try:
             with open('vacans.json', 'r') as f:
                 job_data = json.load(f)
@@ -101,14 +101,12 @@ class Connector:
             print("Файл пустой, запишите данные в файл!")
             return []
 
-# hh = HH().get_request()  # Делаем запрос
-# sj = SuperJob().get_request()  # Делаем запрос
-#
-# sjvacasy = SJVacancy(sj)  # Разбиваем по 5 критерия
-# hhvacasy = HHVacancy(hh)  # Разбиваем по 5 критерия
-# #pprint(hhvacasy.get_info_vacancy())
-# #pprint(sjvacasy.get_info_vacancy())
-#
-# con = Connector(union(sjvacasy.get_info_vacancy(), hhvacasy.get_info_vacancy()))  # класс Connector экземпляр
+    def type_of_vacancies(self, jobs):
+        for job in jobs:
+            print(f"Дата публикации: {job['date_published']}\n"
+                  f"Название вакансии: {job['name']}\n"
+                  f"Зарплата: от - {job['salary']['to']} до - {job['salary']['to']}\n"
+                  f"Ресурс: {job['source']}\n"
+                  f"URL : {job['url']}")
+            print()
 
-#con.insert()  # запись в файл вакансий

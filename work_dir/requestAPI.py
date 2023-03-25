@@ -49,7 +49,7 @@ class HHVacancy():
         self.payment = f"от {self.data[0]['salary']['from']} до {self.data[0]['salary']['to']}"  # Зарплата от и до
 
     def get_info_vacancy(self):
-        """ Метод выводит сайт, названи, ссылку, зарплатную вилку,
+        """ Метод выводит сайт, название, ссылку, зарплатную вилку,
             и время размещение вакансий """
         lis_vacansy = []
         for item in self.data:
@@ -114,7 +114,7 @@ class SJVacancy():
 
 
 def union(lis, lis2):
-    """Функция объеденят два запроса с сайтов в один список"""
+    """Функция объединяет два запроса с сайтов в один список"""
     list_all_vacansy = []
     for item in lis:
         list_all_vacansy.append(item)
